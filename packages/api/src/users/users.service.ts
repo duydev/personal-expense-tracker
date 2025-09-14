@@ -2,20 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { BaseService } from 'src/common/services/base.service';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends BaseService<User> {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
-
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  async findById(id: number): Promise<User | null> {
-    return this.userRepository.findOneBy({ id });
+  ) {
+    super(userRepository);
   }
 
   async findByIdOrFail(id: number): Promise<User> {
@@ -27,30 +22,10 @@ export class UsersService {
   }
 
   async findByActivationToken(token: string): Promise<User | null> {
-    return this.userRepository.findOneBy({
-      activationToken: token,
-    });
+    return this.userRepository.findOneBy({ activationToken: token });
   }
 
   async findByResetPasswordToken(token: string): Promise<User | null> {
-    return this.userRepository.findOneBy({
-      resetPasswordToken: token,
-    });
-  }
-
-  async create(userData: Partial<User>): Promise<User> {
-    const user = this.userRepository.create(userData);
-
-    return this.userRepository.save(user);
-  }
-
-  async update(id: number, updateData: Partial<User>): Promise<User | null> {
-    await this.userRepository.update(id, updateData);
-
-    return this.userRepository.findOneBy({ id });
-  }
-
-  async delete(id: number): Promise<void> {
-    await this.userRepository.delete(id);
+    return this.userRepository.findOneBy({ resetPasswordToken: token });
   }
 }

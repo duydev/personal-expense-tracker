@@ -1,18 +1,10 @@
 import { Category } from 'src/categories/entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity } from 'src/common/entities/base.entity';
 
 @Entity()
-export class Expense {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Expense extends BaseEntity {
   @ManyToOne(() => User, (user) => user.expenses)
   @JoinColumn({ name: 'user_id' })
   user: User;
@@ -27,18 +19,6 @@ export class Expense {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true, name: 'incurred_at' })
   incurredAt: Date | null;
-
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @Column({ type: 'bigint', nullable: true })
-  createdBy: number | null;
-
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-
-  @Column({ type: 'bigint', nullable: true })
-  updatedBy: number | null;
 }

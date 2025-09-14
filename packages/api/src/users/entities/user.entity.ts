@@ -1,20 +1,11 @@
 import { Exclude } from 'class-transformer';
 import { Category } from 'src/categories/entities/category.entity';
 import { Expense } from 'src/expenses/entities/expense.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity } from 'src/common/entities/base.entity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
@@ -43,26 +34,6 @@ export class User {
   })
   @Exclude()
   resetPasswordExpires: Date | null;
-
-  @CreateDateColumn({
-    type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP',
-    name: 'created_at',
-  })
-  createdAt: Date;
-
-  @Column({ type: 'bigint', nullable: true, name: 'created_by' })
-  createdBy: number | null;
-
-  @UpdateDateColumn({
-    type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP',
-    name: 'updated_at',
-  })
-  updatedAt: Date;
-
-  @Column({ type: 'bigint', nullable: true, name: 'updated_by' })
-  updatedBy: number | null;
 
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];
