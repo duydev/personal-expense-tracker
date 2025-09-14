@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { CategoriesModule } from './categories/categories.module';
+import { ExpensesModule } from './expenses/expenses.module';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     HealthModule,
     UsersModule,
     AuthModule,
+    CategoriesModule,
+    ExpensesModule,
   ],
   providers: [
     {
