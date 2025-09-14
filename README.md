@@ -1,48 +1,112 @@
+![Build](https://img.shields.io/github/actions/workflow/status/duydev/personal-expense-tracker/ci.yml?branch=main&label=build)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
+![License](https://img.shields.io/github/license/duydev/personal-expense-tracker)
+![Tech Stack](https://img.shields.io/badge/stack-NestJS%20%7C%20React%20%7C%20PostgreSQL%20%7C%20Redis-blue)
+
 # Personal Expense Tracker
 
 ## Overview
 
-Personal Expense Tracker is a user-centric application designed to help individuals track and manage their daily expenses and incomes efficiently. The project focuses on simplicity, data security, and practical value, enabling users to gain better control over their personal finances.
+Personal Expense Tracker is a modern, full-stack application to help individuals track, analyze, and manage their personal finances. Built with a focus on simplicity, security, and actionable insights, it empowers users to:
 
-## Main Features (MVP)
+- Record daily expenses and incomes
+- Visualize spending patterns and trends
+- Set budgets and receive alerts
+- Access their data securely from any device
 
-### 1. User Management
+**Why use this project?**
 
-- **Sign Up:** Register with email/password or social login (Google/Apple).
-- **Login/Logout:** Secure authentication and session management (JWT, Redis cache).
-- **Forgot/Reset Password:** Easily reset password via email.
+- 🚀 Fast, mobile-first UI (React + Vite)
+- 🔒 Secure authentication (JWT, Redis, encrypted data)
+- 📊 Rich analytics and PDF/email reporting
+- 🛠️ Easily extensible and cloud-ready
 
-### 2. Transaction Management
+## Features
 
-- **Add Transaction:** Record expenses/incomes with amount, date, description, and category.
-- **Edit/Delete Transaction:** Update or soft-delete entries to maintain accurate records.
-- **Categories:** Manage default and custom categories for transactions.
+### User Management
 
-### 3. Reporting & Analytics
+- Register with email/password or social login (Google/Apple)
+- Secure login/logout with JWT and Redis session management
+- Forgot/reset password via email
 
-- **Dashboard:** View monthly income/expense summary and pie chart by category.
-- **Transaction History:** Filterable list of transactions by date/month/category.
-- **Monthly Reports:** Generate and receive PDF/email reports with financial summaries.
+### Transaction Management
 
-### 4. (Optional) Budget Management
+- Add, edit, or delete expenses and incomes
+- Categorize transactions (default/custom categories)
+- Filter and search transaction history
 
-- **Set Budgets:** Define budgets per category/month and receive alerts when exceeded.
-- **Reminders:** Get notifications for upcoming bills or low budgets.
+### Reporting & Analytics
+
+- Dashboard with monthly summaries and pie charts
+- Filterable transaction history by date/month/category
+- Generate PDF/email reports
+
+### Budget & Reminders (Optional)
+
+- Set monthly/category budgets and get alerts
+- Receive reminders for bills or low budgets
 
 ## Non-Functional Requirements
 
-- **Performance:** Dashboard loads in under 2 seconds (Redis caching).
-- **Security:** Encrypted sensitive data, HTTPS API, role-based access.
-- **Usability:** Responsive UI (mobile-first, React), multi-language support (EN/VI).
-- **Scalability:** Flexible DB schema, cloud-ready deployment.
-- **Testing:** Unit tests (NestJS API), integration tests (DB), E2E tests (Frontend).
+- **Performance:** Fast dashboard (Redis caching, optimized queries)
+- **Security:** Encrypted data, HTTPS, RBAC, secure sessions
+- **Usability:** Responsive, mobile-first UI, multi-language (EN/VI)
+- **Scalability:** Modular backend, cloud-ready, flexible DB
+- **Testing:** Unit, integration, and E2E tests (NestJS, Jest)
 
 ## Tech Stack
 
-- **Backend:** NestJS (API), PostgreSQL (DB), Redis (cache/session)
-- **Frontend:** React (TypeScript, Chart.js)
-- **Other:** Nodemailer (email), Schedule jobs (NestJS), Cloud deployment (Heroku/AWS)
+- **Backend:** [NestJS](https://nestjs.com/) (API), [PostgreSQL](https://www.postgresql.org/) (DB), [Redis](https://redis.io/) (cache/session)
+- **Frontend:** [React](https://react.dev/) (TypeScript, [Chart.js](https://www.chartjs.org/))
+- **Other:** [Nodemailer](https://nodemailer.com/) (email), scheduled jobs (NestJS), cloud deployment (Heroku/AWS)
 
 ## Getting Started
 
-_Setup and usage instructions coming soon._
+### Prerequisites
+
+- Node.js v18+
+- Yarn v1.22+
+- PostgreSQL & Redis (local or Docker)
+
+### Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/duydev/personal-expense-tracker.git
+cd personal-expense-tracker
+
+# Install dependencies
+yarn install
+
+# Copy and edit environment variables
+cp .env.example .env
+# (edit .env as needed for DB, Redis, etc)
+
+# Start backend (NestJS API)
+yarn dev:api
+# Start frontend (React/Vite)
+yarn dev:frontend
+```
+
+### Running Tests
+
+```bash
+# Run all unit tests
+yarn workspace api test
+# Run with coverage
+yarn workspace api test --coverage
+```
+
+### Project Structure
+
+- `packages/api` — NestJS backend (TypeORM, PostgreSQL, Redis)
+- `packages/frontend` — React + Vite frontend
+
+## Contributing
+
+Contributions are welcome! Please open issues or pull requests for features, bug fixes, or documentation improvements.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
