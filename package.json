@@ -14,6 +14,15 @@
     "dev:api": "yarn workspace api start:dev",
     "dev:frontend": "yarn workspace frontend dev",
     "build:api": "yarn workspace api build",
-    "build:frontend": "yarn workspace frontend build"
+    "build:frontend": "yarn workspace frontend build",
+    "lint": "eslint . --ext .js,.ts,.tsx,.jsx",
+    "format": "prettier --write .",
+    "test": "yarn workspace api test"
+  },
+  "devDependencies": {
+    "eslint": "9.35.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.4",
+    "prettier": "3.6.2"
   }
 }
