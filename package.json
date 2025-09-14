@@ -1,0 +1,19 @@
+{
+  "name": "personal-expense-tracker",
+  "version": "1.0.0",
+  "description": "Personal expense tracker project",
+  "main": "index.js",
+  "repository": "https://github.com/duydev/personal-expense-tracker.git",
+  "author": "Trần Nhật Duy <duytn.hcm@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "yarn workspace api start:dev",
+    "dev:frontend": "yarn workspace frontend dev",
+    "build:api": "yarn workspace api build",
+    "build:frontend": "yarn workspace frontend build"
+  }
+}
