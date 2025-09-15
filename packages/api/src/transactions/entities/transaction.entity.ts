@@ -9,11 +9,13 @@ export class Transaction extends BaseEntity {
   @Column({ type: 'enum', enum: TransactionType })
   type: TransactionType;
 
-  @ManyToOne(() => User, (user) => user.transactions)
+  @ManyToOne(() => User, (user) => user.transactions, { nullable: false })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.transactions)
+  @ManyToOne(() => Category, (category) => category.transactions, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 

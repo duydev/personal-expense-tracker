@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { CategoryType } from '../enums/category-types.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { SortOrder } from '../../common/enums/sort-order.enum';
@@ -36,11 +36,12 @@ export class ListCategoryFiltersDto {
 
   @ApiPropertyOptional({
     description: 'Sort by field (e.g., createdAt, name)',
+    enum: ['createdAt', 'name'],
     example: 'createdAt',
   })
   @IsOptional()
-  @IsString()
-  sort?: string;
+  @IsEnum(['createdAt', 'name'])
+  sort?: 'createdAt' | 'name';
 
   @ApiPropertyOptional({
     description: 'Sort order (ascending or descending)',

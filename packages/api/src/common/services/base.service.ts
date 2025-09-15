@@ -3,6 +3,7 @@ import {
   ObjectLiteral,
   DeepPartial,
   FindOptionsWhere,
+  FindOneOptions,
 } from 'typeorm';
 
 export abstract class BaseService<T extends ObjectLiteral> {
@@ -42,11 +43,11 @@ export abstract class BaseService<T extends ObjectLiteral> {
     } as unknown as FindOptionsWhere<T>);
   }
 
-  findOne(options: FindOptionsWhere<T>): Promise<T | null> {
+  findOne(options: FindOneOptions<T>): Promise<T | null> {
     return this.repository.findOne(options);
   }
 
-  findOneOrFail(options: FindOptionsWhere<T>): Promise<T> {
+  findOneOrFail(options: FindOneOptions<T>): Promise<T> {
     return this.repository.findOneOrFail(options);
   }
 
