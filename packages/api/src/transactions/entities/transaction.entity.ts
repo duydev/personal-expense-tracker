@@ -2,14 +2,18 @@ import { Category } from 'src/categories/entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { TransactionType } from '../enums/transaction-types.enum';
 
 @Entity()
-export class Expense extends BaseEntity {
-  @ManyToOne(() => User, (user) => user.expenses)
+export class Transaction extends BaseEntity {
+  @Column({ type: 'enum', enum: TransactionType })
+  type: TransactionType;
+
+  @ManyToOne(() => User, (user) => user.transactions)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.expenses)
+  @ManyToOne(() => Category, (category) => category.transactions)
   @JoinColumn({ name: 'category_id' })
   category: Category;
 

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Logger } from '@nestjs/common';
+import { Logger, ShutdownSignal } from '@nestjs/common';
 import compression from 'compression';
 import helmet from 'helmet';
 
@@ -28,12 +28,16 @@ async function bootstrap() {
     )
     .setVersion(process.env.APP_VERSION ?? '1.0')
     .addTag('expenses')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  // gracefully shutdown
+  app.enableShutdownHooks([ShutdownSignal.SIGTERM, ShutdownSignal.SIGINT]);
+
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 
   Logger.log(`Environment: ${process.env.NODE_ENV}`);
   Logger.log(`Application is running on: ${await app.getUrl()}`);

@@ -11,7 +11,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CategoriesModule } from './categories/categories.module';
-import { ExpensesModule } from './expenses/expenses.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -44,13 +44,14 @@ import { ExpensesModule } from './expenses/expenses.module';
         ),
         autoLoadEntities: true,
         synchronize: true, // Note: set to false in production
+        logging: true,
       }),
     }),
     HealthModule,
     UsersModule,
     AuthModule,
     CategoriesModule,
-    ExpensesModule,
+    TransactionsModule,
   ],
   providers: [
     {

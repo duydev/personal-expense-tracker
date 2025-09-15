@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Category } from 'src/categories/entities/category.entity';
-import { Expense } from 'src/expenses/entities/expense.entity';
+import { Transaction } from 'src/transactions/entities/transaction.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
 
@@ -38,6 +38,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];
 
-  @OneToMany(() => Expense, (expense) => expense.user)
-  expenses: Expense[];
+  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  transactions: Transaction[];
 }
