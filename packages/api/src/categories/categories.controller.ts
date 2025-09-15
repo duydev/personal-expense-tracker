@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
-import { ListCategoriesDto } from './dto/list-category.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { ListCategoryFiltersDto } from './dto/list-category-filters.dto';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -49,8 +49,11 @@ export class CategoriesController {
       pageCount: 1,
     },
   })
-  async findAll(@CurrentUser() user: User, @Query() params: ListCategoriesDto) {
-    return this.categoriesService.findAll(user.id, params);
+  async findAll(
+    @GetUser() user: User,
+    @Query() params: ListCategoryFiltersDto,
+  ) {
+    return this.categoriesService.findAllForUser(user.id, params);
   }
 
   @Get(':id')
@@ -66,8 +69,8 @@ export class CategoriesController {
     },
   })
   @ApiResponse({ status: 404, description: 'Category not found.' })
-  async findOne(@CurrentUser() user: User, @Param('id') id: string) {
-    const category = await this.categoriesService.find(user.id, +id);
+  async findOne(@GetUser() user: User, @Param('id') id: string) {
+    const category = await this.categoriesService.findByIdForUser(user.id, +id);
 
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -102,7 +105,7 @@ export class CategoriesController {
     },
   })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
-  async create(@CurrentUser() user: User, @Body() dto: CreateCategoryDto) {
+  async create(@GetUser() user: User, @Body() dto: CreateCategoryDto) {
     console.log('>>', dto, user);
 
     return this.categoriesService.create({ ...dto, user: { id: user.id } });
@@ -122,7 +125,7 @@ export class CategoriesController {
   })
   @ApiResponse({ status: 404, description: 'Category not found.' })
   async update(
-    @CurrentUser() user: User,
+    @GetUser() user: User,
     @Param('id') id: string,
     @Body() dto: UpdateCategoryDto,
   ) {
@@ -134,7 +137,7 @@ export class CategoriesController {
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'The category has been deleted.' })
   @ApiResponse({ status: 404, description: 'Category not found.' })
-  async delete(@CurrentUser() user: User, @Param('id') id: string) {
+  async delete(@GetUser() user: User, @Param('id') id: string) {
     const category = await this.findOne(user, id);
 
     return this.categoriesService.delete(category.id);

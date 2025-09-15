@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
-import { ListCategoriesDto } from './dto/list-category.dto';
+import { ListCategoriesDto } from './dto/list-category-filters.dto';
 import { Category } from './entities/category.entity';
 import { CategoryType } from './enums/category-types.enum';
 import { User } from '../users/entities/user.entity';

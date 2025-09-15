@@ -1,26 +1,23 @@
-export function toLimit(
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  MAX_PAGE_SIZE,
+} from '../constants/pagination.constant';
+
+export function getPaginationOptions(
   pageSize?: number,
-  defaultLimit: number = 10,
-  maxLimit: number = 100,
-): number {
-  let limit = pageSize ?? defaultLimit;
+  page?: number,
+): { take: number; skip: number; pageSize: number; page: number } {
+  pageSize = pageSize || DEFAULT_PAGE_SIZE;
+  pageSize = pageSize > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : pageSize;
+  page = page || DEFAULT_PAGE;
 
-  if (limit > maxLimit) {
-    limit = maxLimit;
-  }
+  const take = pageSize;
+  const skip = (page - 1) * pageSize;
 
-  return limit;
+  return { take, skip, pageSize, page };
 }
 
-export function toSkip(page?: number, limit?: number): number {
-  const currentPage = page && page > 0 ? page : 1;
-  const currentLimit = limit && limit > 0 ? limit : 10;
-
-  return (currentPage - 1) * currentLimit;
-}
-
-export function toPageCount(total: number, limit?: number): number {
-  const currentLimit = limit && limit > 0 ? limit : total;
-
-  return Math.ceil(total / currentLimit);
+export function toPageCount(total: number, limit: number): number {
+  return Math.ceil(total / limit);
 }

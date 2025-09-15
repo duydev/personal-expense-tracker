@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { BaseService } from 'src/common/services/base.service';
-import { ListCategoriesDto } from './dto/list-category.dto';
-import { toLimit, toSkip, toPageCount } from 'src/common/utils/pagination.util';
+import { ListCategoryFiltersDto } from './dto/list-category-filters.dto';
+import {
+  getPaginationOptions,
+  toPageCount,
+} from 'src/common/utils/pagination.util';
+import { getSortOptions } from 'src/common/utils/sort.util';
 
 @Injectable()
 export class CategoriesService extends BaseService<Category> {
@@ -15,44 +19,37 @@ export class CategoriesService extends BaseService<Category> {
     super(categoryRepository);
   }
 
-  async findAll(userId: number, options: ListCategoriesDto) {
-    const {
-      page = 1,
-      pageSize,
-      sort = 'createdAt',
-      sortOrder = 'DESC',
-      type,
-    } = options;
+  async findAllForUser(userId: number, filters: ListCategoryFiltersDto) {
+    const { page, pageSize, take, skip } = getPaginationOptions(
+      filters.pageSize,
+      filters.page,
+    );
+    const { sort, sortOrder } = getSortOptions(filters.sort, filters.sortOrder);
+    const { type } = filters;
 
     const query = this.categoryRepository
       .createQueryBuilder('category')
       .where('category.user.id = :userId', { userId })
-      .orderBy(`category.${sort}`, sortOrder.toUpperCase() as 'ASC' | 'DESC');
+      .orderBy(`category.${sort}`, sortOrder)
+      .take(take)
+      .skip(skip);
 
     if (type) {
       query.andWhere('category.type = :type', { type });
     }
 
-    if (pageSize) {
-      const skip = toSkip(page, toLimit(pageSize));
-      query.skip(skip).take(toLimit(pageSize));
-    }
-
     const [data, total] = await query.getManyAndCount();
-
-    const limit = pageSize ? toLimit(pageSize) : total;
-    const pageCount = toPageCount(total, limit);
 
     return {
       data,
       total,
-      pageSize: limit,
+      pageSize,
       page,
-      pageCount,
+      pageCount: toPageCount(total, pageSize),
     };
   }
 
-  async find(userId: number, id: number) {
+  async findByIdForUser(userId: number, id: number) {
     return this.categoryRepository.findOne({
       where: {
         id,

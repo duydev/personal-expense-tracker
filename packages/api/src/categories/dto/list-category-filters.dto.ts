@@ -4,11 +4,11 @@ import { CategoryType } from '../enums/category-types.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { SortOrder } from '../../common/enums/sort-order.enum';
 
-export class ListCategoriesDto {
+export class ListCategoryFiltersDto {
   @ApiPropertyOptional({
     description: 'Filter by category type (income or expense)',
     enum: CategoryType,
-    example: 'expense',
+    example: CategoryType.EXPENSE,
   })
   @IsOptional()
   @IsEnum(CategoryType)
