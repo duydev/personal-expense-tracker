@@ -8,7 +8,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/users/entities/user.entity';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -46,7 +52,7 @@ export class AuthController {
   async register(@Body() userData: RegisterDto) {
     const user = await this.authService.register(userData);
 
-    return { message: 'User registered successfully', user };
+    return { message: 'User registered successfully', data: user };
   }
 
   @Post('activate')
@@ -101,10 +107,11 @@ export class AuthController {
   login(@Request() req: Request & { user: User }) {
     const result = this.authService.login(req.user);
 
-    return { message: 'Login successful', ...result };
+    return { message: 'Login successful', data: result };
   }
 
   @Post('logout')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Logout successful' })
   logout() {
@@ -188,7 +195,7 @@ export class AuthController {
   refreshToken(@Body() body: { refreshToken: string }) {
     const result = this.authService.refreshToken(body.refreshToken);
 
-    return { message: 'Token refreshed successfully', ...result };
+    return { message: 'Token refreshed successfully', data: result };
   }
 
   @Get('me')
@@ -202,11 +209,15 @@ export class AuthController {
       email: 'user@example.com',
     },
   })
-  getCurrentUser(@Request() req: Request & { user: User }) {
-    return { user: req.user };
+  @ApiBearerAuth()
+  async getCurrentUser(@Request() req: Request & { user: User }) {
+    const user = await this.userService.findById(req.user.id);
+
+    return user;
   }
 
   @Post('change-password')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Change user password' })
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })

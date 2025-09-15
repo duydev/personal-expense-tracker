@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
@@ -9,6 +9,8 @@ import {
   toPageCount,
 } from 'src/common/utils/pagination.util';
 import { getSortOptions } from 'src/common/utils/sort.util';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService extends BaseService<Category> {
@@ -50,11 +52,49 @@ export class CategoriesService extends BaseService<Category> {
   }
 
   async findByIdForUser(userId: number, id: number) {
-    return this.categoryRepository.findOne({
+    const category = await this.categoryRepository.findOne({
       where: {
         id,
         user: { id: userId },
       },
     });
+
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+
+    return category;
+  }
+
+  async createForUser(userId: number, dto: CreateCategoryDto) {
+    const category = this.categoryRepository.create({
+      ...dto,
+      user: { id: userId },
+      createdBy: userId,
+      updatedBy: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    return this.categoryRepository.save(category);
+  }
+
+  async updateForUser(userId: number, id: number, dto: UpdateCategoryDto) {
+    const category = await this.findByIdForUser(userId, id);
+    const updatedCategory = this.categoryRepository.merge(category, {
+      ...dto,
+      updatedBy: userId,
+      updatedAt: new Date(),
+    });
+
+    return this.categoryRepository.save(updatedCategory);
+  }
+
+  async deleteForUser(userId: number, id: number) {
+    const category = await this.findByIdForUser(userId, id);
+    const deletedCategory = this.categoryRepository.merge(category, {
+      deletedBy: userId,
+    });
+    await this.categoryRepository.softRemove(deletedCategory);
   }
 }

@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { HttpResponseInterceptor } from './common/interceptors/http-response.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -70,6 +72,14 @@ import { TransactionsModule } from './transactions/transactions.module';
     {
       provide: 'APP_GUARD',
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: HttpResponseInterceptor,
+    },
+    {
+      provide: 'APP_FILTER',
+      useClass: HttpExceptionFilter,
     },
   ],
 })

@@ -72,7 +72,6 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
-      // do nothing to prevent email enumeration
       return;
     }
 
@@ -112,7 +111,10 @@ export class AuthService {
       const payload = this.jwtService.verify<{ sub: number; email: string }>(
         refreshToken,
       );
-      const accessToken = this.jwtService.sign(payload);
+      const accessToken = this.jwtService.sign({
+        sub: payload.sub,
+        email: payload.email,
+      });
 
       return { accessToken, refreshToken };
     } catch {

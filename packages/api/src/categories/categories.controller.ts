@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -70,13 +69,7 @@ export class CategoriesController {
   })
   @ApiResponse({ status: 404, description: 'Category not found.' })
   async findOne(@GetUser() user: User, @Param('id') id: string) {
-    const category = await this.categoriesService.findByIdForUser(user.id, +id);
-
-    if (!category) {
-      throw new NotFoundException(`Category with ID ${id} not found`);
-    }
-
-    return category;
+    return this.categoriesService.findByIdForUser(user.id, +id);
   }
 
   @Post()
@@ -106,9 +99,7 @@ export class CategoriesController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
   async create(@GetUser() user: User, @Body() dto: CreateCategoryDto) {
-    console.log('>>', dto, user);
-
-    return this.categoriesService.create({ ...dto, user: { id: user.id } });
+    return this.categoriesService.createForUser(user.id, dto);
   }
 
   @Patch(':id')
@@ -129,17 +120,13 @@ export class CategoriesController {
     @Param('id') id: string,
     @Body() dto: UpdateCategoryDto,
   ) {
-    const category = await this.findOne(user, id);
-
-    return this.categoriesService.update(category.id, dto);
+    return this.categoriesService.updateForUser(user.id, +id, dto);
   }
 
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'The category has been deleted.' })
   @ApiResponse({ status: 404, description: 'Category not found.' })
   async delete(@GetUser() user: User, @Param('id') id: string) {
-    const category = await this.findOne(user, id);
-
-    return this.categoriesService.delete(category.id);
+    await this.categoriesService.deleteForUser(user.id, +id);
   }
 }

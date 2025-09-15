@@ -23,6 +23,6 @@ export class Transaction extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @Column({ type: 'timestamptz', nullable: true, name: 'incurred_at' })
-  incurredAt: Date | null;
+  @Column({ type: 'timestamptz', name: 'incurred_at' })
+  incurredAt: Date;
 }
