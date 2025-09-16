@@ -16,6 +16,8 @@ import { HttpResponseInterceptor } from './common/interceptors/http-response.int
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
+import { TypeOrmLoggerModule } from './typeorm-logger/typeorm-logger.module';
+import { TypeOrmPinoLogger } from './typeorm-logger/typeorm-pino.logger';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { LoggerModule } from 'nestjs-pino';
                   },
                 }
               : undefined,
+          autoLogging: false, // disables automatic req/res logging
+          quietReqLogger: true, // disable default request logging
         },
       }),
     }),
@@ -57,10 +61,14 @@ import { LoggerModule } from 'nestjs-pino';
         },
       ],
     }),
+    TypeOrmLoggerModule,
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      imports: [ConfigModule, TypeOrmLoggerModule],
+      inject: [ConfigService, TypeOrmPinoLogger],
+      useFactory: (
+        configService: ConfigService,
+        typeOrmLogger: TypeOrmPinoLogger,
+      ) => ({
         type: 'postgres',
         host: configService.get<string>('DB_HOST', 'localhost'),
         port: parseInt(configService.get<string>('DB_PORT', '5432'), 10),
@@ -72,7 +80,14 @@ import { LoggerModule } from 'nestjs-pino';
         ),
         autoLoadEntities: true,
         synchronize: true, // Note: set to false in production
-        logging: true,
+        logging:
+          configService.get<string>('NODE_ENV', 'development') === 'development'
+            ? 'all'
+            : false,
+        logger:
+          configService.get<string>('NODE_ENV', 'development') === 'development'
+            ? typeOrmLogger
+            : undefined,
       }),
     }),
     HealthModule,
