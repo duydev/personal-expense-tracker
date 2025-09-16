@@ -5,7 +5,7 @@ export class BaseResponseDto<T> {
 
   message?: string;
 
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 
   constructor(partial: Partial<BaseResponseDto<T>>) {
     Object.assign(this, partial);

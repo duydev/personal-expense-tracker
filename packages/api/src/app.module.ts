@@ -14,10 +14,36 @@ import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { HttpResponseInterceptor } from './common/interceptors/http-response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        pinoHttp: {
+          level:
+            configService.get<string>('LOG_LEVEL', 'info') === 'debug'
+              ? 'debug'
+              : 'info',
+          transport:
+            configService.get<string>('NODE_ENV', 'development') ===
+            'development'
+              ? {
+                  target: 'pino-pretty',
+                  options: {
+                    colorize: true,
+                    translateTime: 'SYS:standard',
+                    ignore: 'pid,hostname',
+                  },
+                }
+              : undefined,
+        },
+      }),
+    }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -57,28 +83,28 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
   ],
   providers: [
     {
-      provide: 'APP_PIPE',
+      provide: APP_PIPE,
       useFactory: () =>
         new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     },
     {
-      provide: 'APP_INTERCEPTOR',
+      provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
     {
-      provide: 'APP_GUARD',
+      provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
     {
-      provide: 'APP_GUARD',
+      provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
     {
-      provide: 'APP_INTERCEPTOR',
+      provide: APP_INTERCEPTOR,
       useClass: HttpResponseInterceptor,
     },
     {
-      provide: 'APP_FILTER',
+      provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
   ],
